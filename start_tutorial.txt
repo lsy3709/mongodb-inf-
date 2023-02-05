@@ -1,0 +1,15 @@
+몽고 디비 설치 도커 -> 설치 부분 참고
+컴파스 설치
+node 설치 
+vscode 설치 
+폴더 만들기 mongodb_inf
+npm init 
+npm i express
+npm i -D nodemon
+(-D 개발용이다.)
+package.json 파일안에서 , 해당 파일 변경시 시작 하는 부분 설정. 
+기본 ->"start": "node server.js",
+변경 -> "dev" : "nodemon server.js" -> 이걸로 하면 파일 변경시 자동 감지 , npm dev start 따로 할 필요없음.
+(처음 한번 npm dev start )
+
+RESTAPI 간단 서버 설치 부분 
