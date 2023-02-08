@@ -3,6 +3,12 @@ const app = express();
 
 const users = [{ name: "SangYong", age:40}]
 
+const mongoose = require('mongoose');
+
+const MONGO_URI = 'mongodb://localhost:27017';
+
+mongoose.connect(MONGO_URI).then(result => console.log({result}) )
+
 //express 파싱 기능 미들웨어 함수 추가
 app.use(express.json())
 
