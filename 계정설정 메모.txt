@@ -1,0 +1,42 @@
+참고 블로그 
+https://jizard.tistory.com/398
+
+use admin # admin으로 전환
+# 관리자 계정 만들기
+db.createUser({
+	user: "username",
+    pwd: "password",
+    roles: [{
+    	role: "root",
+        db: "admin"
+    }]
+});
+# 일반 계정 만들기
+db.createUser({
+	user: "username",
+    pwd: "password",
+    roles: [{
+    	role: "readWrite",
+        db: "db"
+    }]
+});
+
+ex) 관리자 계정 
+db.createUser({
+	user: "admin",
+    pwd: "1234",
+    roles: [{
+    	role: "root",
+        db: "admin"
+    }]
+});
+
+ex2) 일반 계정 
+db.createUser({
+	user: "user1",
+    pwd: "1234",
+    roles: [{
+    	role: "readWrite",
+        db: "db"
+    }]
+});

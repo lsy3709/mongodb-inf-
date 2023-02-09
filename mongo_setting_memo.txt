@@ -1,0 +1,70 @@
+참고블로그
+https://mishuni.tistory.com/114
+
+1
+ docker run --name mongodb2 -v /data/mongo:/data/db -d -p 27017:27017 mongo --auth
+ 
+ 여기서 -v 는 volumn 설정을 뜻하는데 해당 옵션의 구조는
+
+-v {host 파일 위치}:{container 내부 위치}
+ 
+이는 해당 container 내부 위치에 있는 파일들이 host 파일 위치에 동기화되는 것을 말한다.
+즉, 위에서 실행한 mongodb2 에 저장된 db 값들이 해당 컨테이너가 종료 되어도 Host 컴퓨터에 계속 저장되어 있다.
+다시 mongodb를 실행할 때, 해당 volumn 옵션을 똑같이 해주면 이전의 mongodb의 값을 그대로 복원할 수 있다.
+
+
+-d 는 daemon 설정 (즉, background 에서 해당 컨테이너가 돌아가는 것)
+
+-p 는 외부에서 해당 컨테이너로 접근할 수 있는 port 를 열어주는 것이다. 
+ 
+2. 컨테이너 접속 및 인증 설정
+
+ 잘 운용중인지 확인 
+ 
+ docker ps
+ 
+ docker exec -it mongodb2 mongo
+ ==============================================================
+ 참고블로그
+ https://jinyes-tistory.tistory.com/232
+ 
+ ex)
+ mongod.conf 파일 내용 
+ 
+ # Where and how to store data.
+storage:
+  dbPath: /mongoDB/data/
+  journal:
+    enabled: true
+
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 0.0.0.0 
+ 
+ 실행
+ docker build -t docker-file-test:0.1 .
+ 확인
+ docker images 
+ 
+ ex)
+ docker run -it -d --name mongodb -v ${pwd}/data:/mongoDB/data/ -v ${pwd}/log:/var/log/mongodb/ -p 27017:27017 docker-file-test:0.1
+ 
+ 확인 
+ http://localhost:27017/
+확인2
+컴파스로  데이터베이스 만들고, 컬렉션 만든 후, 
+도커 몽고 디비 재시작 후, 컴파스 들어가면 해당 
+데이터베이스 그대로 저장 되어 있음.
+
+ 몽고 디비 버전 확인 
+도커 데스크톱 -> 목록 -> 이름 클릭 -> 인스펙트 클릭 
+ 

@@ -9,12 +9,13 @@ mongoose 사용 할 예정
 이유? 
 1 내부적으로 몽고 디비 모듈을 사용하고 있다. 
 2 다양한 편의 기능 가지고 있다. 
+3 문법 동일.
 
 npm i mongoose
 
 
 3. vscode 에 설치.
-CH02_0_server.js 여기 파일에 
+CH04_0_server.js 여기 파일에 
 연결코드 입력.
 const express = require('express');
 const app = express();
