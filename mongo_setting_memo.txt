@@ -25,6 +25,7 @@ https://mishuni.tistory.com/114
  
  docker exec -it mongodb2 mongo
  ==============================================================
+ 저장소 참고 @@@@@@@@@@@@@@@@@@@@@@@@
  참고블로그
  https://jinyes-tistory.tistory.com/232
  
