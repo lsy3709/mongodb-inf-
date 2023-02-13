@@ -14,7 +14,8 @@ const { Schema, model} = require('mongoose');
 
 // 스키마 (데이터베이스 와 비슷)
 const UserSchema = new Schema({
-  username : {type : String, requireed: true},
+  // username unique 추가 해보기.
+  username : {type : String, requireed: true, unique: true},
   name: {
     first: {type : String, required: true},
     last: {type: String, required:true}
