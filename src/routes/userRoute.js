@@ -2,7 +2,9 @@
 //(3)Route 추가 부분
 const { Router } = require('express');
 const userRouter = Router();
-const { User } = require('../models/User')
+const mongoose = require("mongoose");
+const { User } = require('../models/User');
+
 
 // 예제1 postman 으로 예제 실습.
 userRouter.get('/', async (req, res) => {
@@ -91,9 +93,21 @@ userRouter.put('/:userId', async (req, res) => {
     //  const user = await User.findByIdAndUpdate(userId,updateBody,{new: true});
 
     //대체 { $set: {age}} -> { age}
-    const user = await User.findByIdAndUpdate(userId, { age, name }, { new: true });
+    // 한번에 처리할 때, 이게 약간 빠름. 
+    //const user = await User.findByIdAndUpdate(userId, { age, name }, { new: true });
     // const user = await User.findByIdAndUpdate(userId, { $set: {age}},{new: true});
+
+    //save document 수정하기. 
+    let user = await User.findById(userId);
+    console.log({ userBeforeEdit: user });
+    if (age) user.age = age;
+    if (name) user.name = name;
+    console.log({ userAfterEdit: user });
+
+    // 호출은 save 이지만, 실제 작업은 업데이트로 처리가 됨. 
+    await user.save()
     return res.send({ user })
+
   } catch (err) {
     console.log(err);
     return res.status(500).send({ err: err.message })
@@ -102,7 +116,7 @@ userRouter.put('/:userId', async (req, res) => {
 // 컴파스에서 필터에서 검색시 아이디가 필요 {_id:ObjectId('63eac7c361ccf46fbdda117d')}
 
 //외부에서 가져쓰기 위해 설정.
- module.exports = {
-  userRouter
- }
+module.exports = {
+  userRouter,
+}
 
