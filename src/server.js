@@ -13,13 +13,18 @@ const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
 
 const server = async () => {
   try {
-    // unique 추가시, 인덱스 추가. -> useCreateIndex: true , 6버전 부터는 안써도 됨. 
-    await mongoose.connect(MONGO_URI,{ useNewUrlParser: true, useUnifiedTopology : true });
+    // unique 추가시, 인덱스 추가. -> useCreateIndex: true , useFindAndModify:false, 6버전 부터는 안써도 됨. 
+
+    await mongoose.connect(MONGO_URI,{ useNewUrlParser: true, useUnifiedTopology : true  });
+
+//디버그 하기위한 명령어 쿼리를 콘솔 상에서 확인 가능. 
+mongoose.set('debug', true)
+
     console.log('MongoDB connected')
   
     app.use(express.json())
   
-     // 예제1
+     // 예제1 postman 으로 예제 실습.
     app.get('/user', async (req, res) => {
       try {
         // 전체 조회.
@@ -84,6 +89,37 @@ const server = async () => {
       }
     })
 
+    //예제5 업데이트 put 
+    // 업데이트시 바로 적용이 안되어서 -> {new: true} 추가.
+    app.put('/user/:userId', async(req,res) => {
+      try{
+        const {userId} = req.params;
+        if(!mongoose.isValidObjectId(userId)) return res.status(400).send({err: "invalid userId"})
+
+        // age, name 2개 업데이트 
+        const { age, name } = req.body;
+        if(!age && !name) return res.status(400).send({err: "age or name is required"});
+
+        // if(!age) return res.status(400).send({err: "age is required"});
+        if(age && typeof age !== 'number') return res.status(400).send({err: "age must be a number"});
+        if(name && typeof name.first !== 'string' && typeof name.last !== 'string') return res.status(400).send({err: "first and last name are string"});
+
+        // 아래 코드가 없어도 -> 업데이트 시, name, age 중 하나만 있어도 업데이트 null 업이도 잘됨.
+        //  let updateBody ={};
+        //  if(age) updateBody.age = age;
+        //  if(name) updateBody.name = name;
+        //  const user = await User.findByIdAndUpdate(userId,updateBody,{new: true});
+
+        //대체 { $set: {age}} -> { age}
+        const user = await User.findByIdAndUpdate(userId, { age, name},{new: true});
+        // const user = await User.findByIdAndUpdate(userId, { $set: {age}},{new: true});
+        return res.send({user})
+      } catch (err) {
+        console.log(err);
+        return res.status(500).send({err : err.message})
+      }
+    })
+    // 컴파스에서 필터에서 검색시 아이디가 필요 {_id:ObjectId('63eac7c361ccf46fbdda117d')}
      
     app.listen(3000, function () {
       console.log('server listening on port 3000');
