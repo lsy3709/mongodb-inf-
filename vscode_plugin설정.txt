@@ -1,0 +1,8 @@
+1 icon : material icon theme
+ 설정에서 해당 사용 클릭 후, 파일 , 폴더 아이콘 변경 확인. 
+2 prettier - code formatter
+ 확인 - ctrl + , 
+ save -> format on save 체크 
+
+
+
