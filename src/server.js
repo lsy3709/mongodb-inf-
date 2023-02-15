@@ -8,6 +8,9 @@ const mongoose = require('mongoose');
 //(3)Route 추가 부분, user 분리된 파일 라우팅 연결 하기.
 const { userRouter } = require('./routes/userRoute')
 
+//(4)blog Route 추가. 
+const { blogRouter } = require('./routes/blogRoute')
+
 
 //URI 부분 
 // atlas 또는 도커 부분으로 해도 가능.
@@ -29,6 +32,8 @@ const server = async () => {
 
     //미들웨어 추가 , (3)Route 추가 부분
     app.use('/user', userRouter)
+
+    app.use('/blog', blogRouter)
 
 
 
