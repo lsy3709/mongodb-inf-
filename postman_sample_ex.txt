@@ -1,0 +1,33 @@
+63eac7c361ccf46fbdda117d
+
+localhost:3000/blog
+body -> raw -> JSON
+
+get
+localhost:3000/blog
+
+post
+localhost:3000/blog
+{
+    "title":"second blog title!!",
+    "content":"second blog content",
+    "userId":"63eac7c361ccf46fbdda117d"
+}
+
+get
+localhost:3000/blog/63ed6786b5be44b51d5d2f63
+
+put
+localhost:3000/blog/63ed6786b5be44b51d5d2f63
+
+{
+    "title":"second title updateed!!",
+    "content":"content is updateed!!"
+}
+
+patch
+localhost:3000/blog/63ed6786b5be44b51d5d2f63/live
+{
+    "islive":true
+}
+
