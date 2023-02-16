@@ -11,6 +11,8 @@ const { userRouter } = require('./routes/userRoute')
 //(4)blog Route 추가. 
 const { blogRouter } = require('./routes/blogRoute')
 
+//(5)comment Route 추가. 
+const { commentRouter } = require('./routes/commentRoute')
 
 //URI 부분 
 // atlas 또는 도커 부분으로 해도 가능.
@@ -34,6 +36,8 @@ const server = async () => {
     app.use('/user', userRouter)
 
     app.use('/blog', blogRouter)
+
+    app.use('/blog/:blogId/comment', commentRouter)
 
 
 

@@ -3,6 +3,14 @@ const blogRouter = Router();
 const { Blog } = require("../models/Blog");
 const { User } = require("../models/User")
 const { isValidObjectId } = require('mongoose')
+//(6) 코멘트 부분 
+const { commentRouter } = require("./commentRoute");
+
+// (6) 코멘트 부분 
+blogRouter.use("/:blogId/comment", commentRouter);
+
+// 조회 
+// localhost:3000/blog/123/comment/456
 
 // 블로그 등록
 blogRouter.post("/", async (req, res) => {
