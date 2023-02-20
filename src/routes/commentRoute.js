@@ -18,7 +18,7 @@ const { isValidObjectId } = require("mongoose");
 
 */
 
-commentRouter.post('/:commentId', async (req, res) => {
+commentRouter.post('/', async (req, res) => {
   try {
     const { blogId } = req.params;
     const { content, userId } = req.body;
@@ -27,7 +27,7 @@ commentRouter.post('/:commentId', async (req, res) => {
     if (!isValidObjectId(userId))
       return res.status(400).send({ err: "userId is invalid" });
     if (typeof content !== "string")
-      return res.status(400).send({ err: "content is invalid" });
+      return res.status(400).send({ err: "content is required" });
 
     const blog = await Blog.findByIdAndUpdate(blogId);
     const user = await User.findByIdAndUpdate(userId);
