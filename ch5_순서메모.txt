@@ -1,0 +1,36 @@
+
+##
+Promise.all - Response Time 개선하기 
+
+//성능 개선  병렬로 한번에 불러오기.
+      const [blog, user] = await Promise.all([
+        Blog.findByIdAndUpdate(blogId),
+        User.findByIdAndUpdate(userId)
+      ])
+    // const blog = await Blog.findByIdAndUpdate(blogId);
+    // const user = await User.findByIdAndUpdate(userId);
+
+포스트맨 결과 확인 시 속도 ms 많이 줄었음. 
+
+put : 코멘트 추가.
+localhost:3000/blog/63ed6786b5be44b51d5d2f63/comment
+
+##
+Comment 불러오기 
+
+// comment 불러오기
+commentRouter.get('/', async (req, res) => {
+  const { blogId } = req.params;
+  if (!isValidObjectId(blogId))
+    return res.status(400).send({ err: "blogId is invalid" });
+
+  const comments = await Comment.find({ blog: blogId });
+  return res.send({ comments });
+});
+
+포스트맨 확인 
+겟 
+localhost:3000/blog/63ed6786b5be44b51d5d2f63/comment
+
+patch 로 해당 블로그 islive 변경해서 , 코멘트 추가 해보기. 
+
