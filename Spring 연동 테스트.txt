@@ -1,0 +1,76 @@
+1.atlas 에서 접속
+2. connect 클릭 
+3. connect your application 선택
+4. 자바 선택, 버전 4.3 이후 
+5. 아래 링크 카피 
+mongodb+srv://<UserName>:<password>@<클러스터이름>.ergif.mongodb.net/<dbName>?retryWrites=true&w=majority
+
+<UserName> -> 해당 유저 (꺽새 지우고)
+<password> -> 패스워드 
+
+ex)
+mongodb+srv://admin3709:<password>@mongodbtutorial.c24ikv6.mongodb.net/?retryWrites=true&w=majority
+
+6. 아이피 등록, 일단 테스트 환경이므로 모두 접속으로 0.0.0.0/0
+
+7. 
+데이터베이스 생성. 
+사이드메뉴에서 -> Browse Collections 선택. 
+-> create database 클릭 
+-> database : blog3
+-> collection : user
+=============================================================================
+spring boot 설정. 
+8. 
+build.gradle
+implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+9. 
+application.yml에 DB 설정
+ex)
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://<유저이름>:<비밀번호>@<클러스터이름>.ergif.mongodb.net/<데이터베이스이름>?retryWrites=true&w=majority
+테스트)
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://admin3709:<패스워드>@mongodbtutorial.c24ikv6.mongodb.net/blog3?retryWrites=true&w=majority
+	  
+10.
+패키지: Document
+만들었던 컬렉션 이름 : user 등록
+
+@AllArgsConstructor
+@Getter
+@Document("user")
+public class User {
+    @Id
+    private Long id;
+    private String title;
+    private String message;
+}
+
+패키지 : Service
+
+@RequiredArgsConstructor
+@Service
+public class UserService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public void mongoInsert() {
+        User user1 = new User(1L, "제목", "메세지");
+        mongoTemplate.insert(user1);
+    }
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,173 @@
+몽고 디비 atlas 클라우드 무료 버전 설치
+실제 운영 환경은 유료 버전 설치.
+
+로컬은 도커 또는 우분투 에 설치 확인. 
+도커는 저장소 까지는 연결 가능. 계정은 아직 확인중.
+우분투는 설치 가능 문서 많이 있음. 
+
+무료버전 설치 
+
+1. mongodb  검색
+https://www.mongodb.com/cloud/atlas/lp/try4?utm_content=rlsavisitor&utm_source=google&utm_campaign=search_gs_pl_evergreen_atlas_core_retarget-brand_gic-null_apac-all_ps-all_desktop_eng_lead&utm_term=mongodb&utm_medium=cpc_paid_search&utm_ad=e&utm_ad_campaign_id=14412646476&adgroup=131761130812&cq_cmp=14412646476&gclid=CjwKCAiA9NGfBhBvEiwAq5vSy95xgRlZrlIOelatm2bQMfclV0xW__XFRTizoeKJYrplityovNAlfRoC3QkQAvD_BwE
+
+2. 회원가입
+구글계정으로 연동 하기. 
+
+3. 로그인 
+
+4. create Oranization 선택. 
+오른쪽 상단 프로필 클릭 -> Oranization 선택. 
+
+5. MongoDB Atlas 선택. 
+
+6. Name Your Organization : MyCompany
+다음.
+7. 공유 멤버는 일단 없이 
+
+8. 생성누르기 
+
+9. Oranization 하위에 프로젝트 생성 
+
+10. 프로젝트 생성 , 홈에서 MongoDBTuto 이름 임력 (초대할 사람없이 생성)
+
+11. 클러스터 만들기. 
+무료버전 Shared Clusters 선택. 
+운영환경에서 Dedicated Clusters 선택. 
+
+12. 
+Cloud Provider & Region : aws 선택. 
+아시아 서울 선택. 
+Cluster Tier 무료버전 선택. 
+MongoDB 5.0, No Backup 선택. 
+Cluster Name : MongoDBTutorial
+
+곧 배포 만들어짐 . 시간 조금 걸림. 
+
+=============================================================
+둘러보기. 
+1 왼쪽 메뉸 Databse 클릭 
+만들어지 클라우드 정보 확인 가능. 
+
+2 운영 환경으로 변경하고 싶으면 점3개 edit configuration 선택. 
+
+Cluster Tier -> 원하는 성능으로 교체. 
+
+3 유료 서비스 등록시에는 결제 카드 등록을 해야 함. 
+
+=============================================================
+데이터베이스 연결 
+
+1 connect 클릭. 
+보안
+ip address 설정 화면 어디에서든 접근 가능하게 일단. 
+0.0.0.0/0 으로 설정. 
+운영환경은 백엔드 아이피 설정하기. 
+
+2 
+유저이름 , 패스워드 등록. 
+
+3 
+처음 접근은 콤파스로 
+Connect using MongoDB Compass
+
+
+(등록 후 노드.js 연결 할지 등 선택. )
+
+
+4 다운로드 콤파스 
+
+5 콤파스 실행 
+Advanced Connection Options 선택
+패스워드는 <password> 지우고 입력 
+mongodb+srv://admin3709:<password>@mongodbtutorial.c24ikv6.mongodb.net/test
+
+6 패스워드 변경 할려면 
+
+왼쪽 사이드 메뉴에서 security -> database Access 클릭 
+에디트 패스워드 선택해서 변경 하기. 
+
+7. 접속 확인 
+admin, config, local 설정 관련 파일 . 일단 그대로 두기. 
+-------------------------------------------------------------------
+설치 후 콤파스에 아래 탭에 콘솔 창 클릭 후 , 간단한 CRUD 확인 
+
+1 db 입력 
+현재 디비 목록 확인. 
+
+2 use blog 2
+디비 변경 
+데이터가 생성이 되면 알아서 데이터베이스 만들어줌. 
+
+3 users2 컬렉션에 이름, 메일 다큐먼트 샘프로 추가 해보기. 
+db.users2.insertOne({ name:"SangYong Lee", email:"lsy@gmail.com"})
+
+4. 조회: 전체 
+db.user2.find()
+
+5. 해당 데이터베이스 리로드 users2 생성 확인. 
+
+6. 
+몽고디비에서 자동생성해주는 유니크 키.
+_id
+63f55a7f22bead6893400dbd
+
+7. 
+샘플 디비 추가. 
+db.users2.insertOne({ name: {first:"SangYong2", last:"Lee"}, email:"lsy2@gmail.com"})
+
+조회: 전체 
+db.user2.find()
+
+객체를 저장. 
+스키마리스 자유롭다. 형식에 매이지 않음. 
+
+8. 수정 
+updateOne({변경할 키 선택},{$set:{변경 할 키 내용}}})
+db.users2.updateOne({name:"SangYong Lee"}, {$set:{ age:30}})
+
+확인. find 또는 컴파스 목록으로 확인. 
+
+9. 하나 조회 
+db.users2.findOne({name:"SangYong Lee"})
+
+10. 하나 조회2
+주의) 해당 객체 멤버에 접근시 큰 따옴표 붙여줘야 함. 
+db.users2.findOne({"name.first":"SangYong2"})
+
+11. 수정2 
+db.users2.updateOne({"name.first":"SangYong2"}, {$set:{ "name.last":"Lee2"}})
+
+12. 터미널로 변경시 조금 번거롭다. 아이디 변경시 
+1차 확인. 
+db.users2.findOne({_id:"63f55a7f22bead6893400dbd"})
+null 확인. 
+
+2차 확인. 
+db.users2.findOne({_id: ObjectId("63f55a7f22bead6893400dbd")})
+
+13. 아이디로 수정하기. age +1 
+db.users2.updateOne({_id: ObjectId("63f55a7f22bead6893400dbd")},{$inc:{age:1}})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

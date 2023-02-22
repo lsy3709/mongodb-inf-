@@ -1,0 +1,61 @@
+설치 후 콤파스에 아래 탭에 콘솔 창 클릭 후 , 간단한 CRUD 확인 
+
+1 db 입력 
+현재 디비 목록 확인. 
+
+2 use blog 2
+디비 변경 
+데이터가 생성이 되면 알아서 데이터베이스 만들어줌. 
+
+3 users2 컬렉션에 이름, 메일 다큐먼트 샘프로 추가 해보기. 
+db.users2.insertOne({ name:"SangYong Lee", email:"lsy@gmail.com"})
+
+4. 조회: 전체 
+db.user2.find()
+
+5. 해당 데이터베이스 리로드 users2 생성 확인. 
+
+6. 
+몽고디비에서 자동생성해주는 유니크 키.
+_id
+63f55a7f22bead6893400dbd
+
+7. 
+샘플 디비 추가. 
+db.users2.insertOne({ name: {first:"SangYong2", last:"Lee"}, email:"lsy2@gmail.com"})
+
+조회: 전체 
+db.user2.find()
+
+객체를 저장. 
+스키마리스 자유롭다. 형식에 매이지 않음. 
+
+8. 수정 
+updateOne({변경할 키 선택},{$set:{변경 할 키 내용}}})
+db.users2.updateOne({name:"SangYong Lee"}, {$set:{ age:30}})
+
+확인. find 또는 컴파스 목록으로 확인. 
+
+9. 하나 조회 
+db.users2.findOne({name:"SangYong Lee"})
+
+10. 하나 조회2
+주의) 해당 객체 멤버에 접근시 큰 따옴표 붙여줘야 함. 
+db.users2.findOne({"name.first":"SangYong2"})
+
+11. 수정2 
+db.users2.updateOne({"name.first":"SangYong2"}, {$set:{ "name.last":"Lee2"}})
+
+12. 터미널로 변경시 조금 번거롭다. 아이디 변경시 
+1차 확인. 
+db.users2.findOne({_id:"63f55a7f22bead6893400dbd"})
+null 확인. 
+
+2차 확인. 
+db.users2.findOne({_id: ObjectId("63f55a7f22bead6893400dbd")})
+
+13. 아이디로 수정하기. age +1 
+db.users2.updateOne({_id: ObjectId("63f55a7f22bead6893400dbd")},{$inc:{age:1}})
+
+14. 삭제 
+db.users2.deleteOne({_id: ObjectId("63f55a7f22bead6893400dbd")})
