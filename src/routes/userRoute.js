@@ -3,7 +3,9 @@
 const { Router } = require('express');
 const userRouter = Router();
 const mongoose = require("mongoose");
-const { User } = require('../models/User');
+
+// 리팩토링
+const { User } = require('../models');
 
 
 // 예제1 postman 으로 예제 실습.

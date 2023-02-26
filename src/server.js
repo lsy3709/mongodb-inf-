@@ -9,10 +9,13 @@ const mongoose = require('mongoose');
 const { userRouter } = require('./routes/userRoute')
 
 //(4)blog Route 추가. 
-const { blogRouter } = require('./routes/blogRoute')
+// const { blogRouter } = require('./routes/blogRoute')
 
 //(5)comment Route 추가. 
-const { commentRouter } = require('./routes/commentRoute')
+// const { commentRouter } = require('./routes/commentRoute')
+
+//(6)리팩토링 하나로 합치기. 
+const { blogRouter, commentRouter } = require('./routes')
 
 //URI 부분 
 // atlas 또는 도커 부분으로 해도 가능.

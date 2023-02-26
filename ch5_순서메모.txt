@@ -33,4 +33,43 @@ commentRouter.get('/', async (req, res) => {
 localhost:3000/blog/63ed6786b5be44b51d5d2f63/comment
 
 patch 로 해당 블로그 islive 변경해서 , 코멘트 추가 해보기. 
+=======================================================================
+
+리팩토링 -> routes/index.js
+
+// 3개 모듈을 exports 하는 것을 하나로 리팩토링
+module.exports = {
+  ...require("./blogRoute"),
+  ...require("./commentRoute"),
+  ...require("./userRoute"),
+};
+
+routes
+//(6)리팩토링 하나로 합치기. 
+routes/server.js
+const { blogRouter, commentRouter } = require('./routes')
+
+models 
+리팩토링 -> models/index.js
+
+
+module.exports = {
+  ...require('./Blog'),
+  ...require('./Comment'),
+  ...require('./User')
+};
+
+//리팩토링
+blogRoute.js 
+const { Blog, User } = require("../models");
+
+commentRoute.js 
+//리팩토링
+const { Blog, User, Comment } = require("../models");
+
+userRoute.js 
+// 리팩토링
+const { User } = require('../models');
+
+
 

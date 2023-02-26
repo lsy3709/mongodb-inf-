@@ -4,9 +4,13 @@ const { Router } = require("express");
 // 조회시 블로그 아이디가 조회가 안되는 부분 
 //  Router({ mergeParams: true }); 해결 .
 const commentRouter = Router({ mergeParams: true });
-const { Comment } = require("../models/Comment");
-const { Blog } = require("../models/Blog");
-const { User } = require("../models/User");
+
+//리팩토링
+const { Blog, User, Comment } = require("../models");
+
+// const { Comment } = require("../models/Comment");
+// const { Blog } = require("../models/Blog");
+// const { User } = require("../models/User");
 const { isValidObjectId } = require("mongoose");
 
 

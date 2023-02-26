@@ -1,7 +1,10 @@
 const { Router } = require("express");
 const blogRouter = Router();
-const { Blog } = require("../models/Blog");
-const { User } = require("../models/User")
+
+//리팩토링
+const { Blog, User } = require("../models");
+// const { Blog } = require("../models/Blog");
+// const { User } = require("../models/User")
 const { isValidObjectId } = require('mongoose')
 //(6) 코멘트 부분 
 const { commentRouter } = require("./commentRoute");
