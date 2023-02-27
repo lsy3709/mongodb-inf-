@@ -20,19 +20,19 @@ blogRouter.post("/", async (req, res) => {
   try {
     const { title, content, islive, userId } = req.body;
     if (typeof title !== "string")
-      res.status(400).send({ err: "title is required" });
+      return res.status(400).send({ err: "title is required" });
     if (typeof content !== "string")
-      res.status(400).send({ err: "content is required" });
+      return res.status(400).send({ err: "content is required" });
     if (islive && typeof islive !== "boolean")
-      res.status(400).send({
+      return res.status(400).send({
         err: "islive must be a boolean"
       });
-    if (!isValidObjectId(userId)) res.status(400).send({ err: "userId is invalid" })
+    if (!isValidObjectId(userId)) return res.status(400).send({ err: "userId is invalid" })
 
     let user = await User.findById(userId);
-    if (!user) res.status(400).send({ err: "user does not exist" });
+    if (!user) return res.status(400).send({ err: "user does not exist" });
 
-    let blog = new Blog({ ...req.body, user })
+    let blog = new Blog({ ...req.body, user });
     await blog.save();
     return res.send({ blog });
 
@@ -54,11 +54,11 @@ blogRouter.get("/", async (req, res) => {
     // 앞에 비효율적인 방법으로 너무 많은 호출이 있지만, 
     // 지금은 3번 만 호출이 됨. 
     const blogs = await Blog.find({})
-      .limit(20)
-      .populate([
-        { path: "user" },
-        { path: "comments", populate: { path: "user" } },
-      ]);
+      .limit(200)
+    // .populate([
+    //   { path: "user" },
+    //   { path: "comments", populate: { path: "user" } },
+    // ]);
 
     return res.send({ blogs })
   } catch (err) {

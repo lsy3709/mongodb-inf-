@@ -8,6 +8,8 @@ const URI = "http://localhost:3000";
 
 // populate 사용으로 성능이 많이 개선. 
 
+// nesting 사용으로 성능 개선. 
+
 //예제1
 // const test = async () => {
 //   // axios 로 node 서버에서 10개만 임의로 받아오기
@@ -23,9 +25,13 @@ const test = async () => {
   console.time("loading time: ");
 
   // axios 로 node 서버에서 10개만 임의로 받아오기
-  let {
-    data: { blogs },
-  } = await axios.get(`${URI}/blog`);
+
+  //ch7 
+  await axios.get(`${URI}/blog`);
+
+  // let {
+  //   data: { blogs },
+  // } = await axios.get(`${URI}/blog`);
   // console.dir(blogs, { depth: 10 });
 
   // 콘솔에 출력해보기. 

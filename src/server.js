@@ -22,38 +22,38 @@ const { blogRouter, commentRouter } = require('./routes')
 //mongodb+srv://admin3709:<password>@mongodbtutorial.c24ikv6.mongodb.net/test
 //<password> 지우고 패스워드 입력.
 const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
-
-const { generateFakeData } = require("../faker")
-
-
+const { generateFakeData } = require("../faker2")
 
 const server = async () => {
   try {
     // unique 추가시, 인덱스 추가. -> useCreateIndex: true , useFindAndModify:false, 6버전 부터는 안써도 됨. 
-    await mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+
+    });
 
     //디버그 하기위한 명령어 쿼리를 콘솔 상에서 확인 가능. 
     mongoose.set('debug', true)
     console.log('MongoDB connected')
     app.use(express.json())
 
-
-    //가짜 디비 추가 부분 
-    // 생성 후 주석 처리하기. 
-    // await generateFakeData(100, 10, 300)
-
     //미들웨어 추가 , (3)Route 추가 부분
     app.use('/user', userRouter)
-
     app.use('/blog', blogRouter)
-
     app.use('/blog/:blogId/comment', commentRouter)
 
-
-
-    app.listen(3000, function () {
+    app.listen(3000, async () => {
       console.log('server listening on port 3000');
-    })
+      //가짜 디비 추가 부분 
+      // 생성 후 주석 처리하기. 
+      // for (let i = 0; i < 20; i++) {
+      //   await generateFakeData(10, 1, 10);
+      // }
+
+      // await generateFakeData(3, 5, 20);
+    });
+
   } catch (err) {
     console.log(err)
   }

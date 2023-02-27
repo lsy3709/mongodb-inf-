@@ -5,7 +5,7 @@ const userRouter = Router();
 const mongoose = require("mongoose");
 
 // 리팩토링
-const { User } = require('../models');
+const { User, Blog } = require('../models');
 
 
 // 예제1 postman 으로 예제 실습.
@@ -60,12 +60,21 @@ userRouter.get('/:userId', async (req, res) => {
 })
 
 //예제4 특정 유저 삭제하기. 
+// ch7 유저 삭제하기. 
 userRouter.delete('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    if (!mongoose.isValidObjectId(userId)) return res.status(400).send({ err: "invalid userId" })
+    if (!mongoose.isValidObjectId(userId))
+      return res.status(400).send({ err: "invalid userId" })
     const user = await User.findOneAndDelete({ _id: userId });
     //const user = await User.DeleteOne({_id: userId});  , 삭제 만 하거나, 조회 하고 삭제등 
+
+    //ch7 유저 삭제 작업중. 
+    await Blog.deleteMany({ "user._id": userId });
+    await Blog.updateMany(
+      {}
+    )
+
     return res.send({ user })
   } catch (err) {
     console.log(err);
@@ -103,8 +112,20 @@ userRouter.put('/:userId', async (req, res) => {
     let user = await User.findById(userId);
     console.log({ userBeforeEdit: user });
     if (age) user.age = age;
-    if (name) user.name = name;
-    console.log({ userAfterEdit: user });
+
+    //ch7 챌린지 변경 작업중. 
+    if (name) {
+      user.name = name;
+      await Promise.all([
+        Blog.updateMany({ "user._id": userId }, { "user.name": name }),
+        Blog.updateMany(
+          {},
+          { "comments.$[comment].userFullName": `${name.first} ${name.last}` },
+          { arrayFilters: [{ "comment.user": userId }] }
+        ),
+      ]);
+    }
+    // console.log({ userAfterEdit: user });
 
     // 호출은 save 이지만, 실제 작업은 업데이트로 처리가 됨. 
     await user.save()
