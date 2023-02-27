@@ -45,7 +45,21 @@ blogRouter.post("/", async (req, res) => {
 //블로그 전체 조회
 blogRouter.get("/", async (req, res) => {
   try {
+    //전체 조회
+    // const blogs = await Blog.find({})
+    // 일부 10개만 조회.
+    // const blogs = await Blog.find({}).limit(10);
+
+    // 작업 중 
+    // 앞에 비효율적인 방법으로 너무 많은 호출이 있지만, 
+    // 지금은 3번 만 호출이 됨. 
     const blogs = await Blog.find({})
+      .limit(20)
+      .populate([
+        { path: "user" },
+        { path: "comments", populate: { path: "user" } },
+      ]);
+
     return res.send({ blogs })
   } catch (err) {
     console.log(err);

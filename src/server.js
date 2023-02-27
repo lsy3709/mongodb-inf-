@@ -23,6 +23,8 @@ const { blogRouter, commentRouter } = require('./routes')
 //<password> 지우고 패스워드 입력.
 const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
 
+const { generateFakeData } = require("../faker")
+
 
 
 const server = async () => {
@@ -34,6 +36,11 @@ const server = async () => {
     mongoose.set('debug', true)
     console.log('MongoDB connected')
     app.use(express.json())
+
+
+    //가짜 디비 추가 부분 
+    // 생성 후 주석 처리하기. 
+    // await generateFakeData(100, 10, 300)
 
     //미들웨어 추가 , (3)Route 추가 부분
     app.use('/user', userRouter)

@@ -1,0 +1,147 @@
+=======================================================================
+블로그의 관계 데이터 읽기 소개
+
+성능 개선, 읽기 부분 수정 예정. 
+3개의 컬렉션의 구조 보고, 어떤 구조로 작업 할지 간단히 살펴봄.
+
+=======================================================================
+<Mongoose v6 업데이트 관련 공지>
+
+저희가 사용하는 Mongoose 모듈이 최근에 버전 6을 출시했습니다.
+
+관련해서 공지드릴 사항이 있습니다. 앞으로 내장을 배우게 되면서 아래와 같은 코드를 작성하게 되는데요.
+
+
+let user = await User.findById(userId);
+
+let blog = new Blog({ ...req.body, user });
+
+이번 업데이트 이후 마지막 줄에 문제가 생깁니다. user가 단순히 user의 데이터만 담고 있는 객체가 아니고 mongoose의 Document Class의 인스턴스입니다. 쉽게 말하면 user 데이터 위에 몽구스가 제공하는 기능들로 감싸져 있는건데요.
+
+원래는 위 코드처럼 작성을 해도 new Blog에 user 데이터가 삽입이 되었어요. 지금은 검증을 더 엄격하게 하고 있어서 user document가 아닌 user 데이터 object 자체를 삽입해야지만 들어갑니다. 다음과 같이 user document에 toObject를 호출하면 순수하게 데이터 객체만 받아올 수 있습니다.
+
+let blog = new Blog({ ...req.body, user: user.toObject() });
+만약 기존 방식대로 하고 싶다면 BlogSchema에서 user 부분을 new Schema로 감싸주셔야 합니다 
+
+
+const BlogSchema = new Schema({
+
+ title: { type: String, required: true },
+
+ content: { type: String, required: true },
+
+ islive: { type: Boolean, required: true, default: false },
+
+ user: new Schema({
+
+ _id: { type: Types.ObjectId, required: true, ref: 'user' },
+
+ username: { type: String, required: true },
+
+ name: {
+
+ first: { type: String, required: true },
+
+ last: { type: String, required: true },
+
+},
+
+}),
+
+}, { timestamps: true });
+============================================================================
+
+faker로 데이터 생성하기
+
+1 루트 폴더에 faker.js 파일 만들기 
+2 npm i faker 설치 
+faker 가상 데이터를 만들 때 사용하는 API 
+랜덤하게 만들어줌.
+3 server.js 에서 가짜 디비 생성 넣기 
+함수 이용해서, 유저 및 게시글, 코멘트 작성. 
+4. 현재 데이터 베이스 삭제후, 더미 디비 넣기. 
+오류 발생 
+대처
+1) npm audit fix --force
+2) npm i faker
+
+5. 가짜 더미 디비 생성 후 주석 처리 하기. 
+
+6. 디비 확인 .
+
+
+=======================================================================
+axios 이용해서 client 코드 만들기
+
+1. client.js 만들고 
+2. 터미널 
+nodemon .\src\client.js
+주의) 실행시 해당 파일은 src 폴더 밑에 있음. 
+오류 발생시 
+1) Npm install nodemon -g
+2) 윈도우즈 파워쉘에서 , 관리자 권한
+3) get-help Set-ExecutionPolicy 입력 -> Y 
+4) Set-ExecutionPolicy RemoteSigned -> A
+다시 실행 해보기. 
+5) client.js 코드 작성 
+6) npm i axios 설치
+restapi 호출시 사용하는 npm 
+7) 블로그 10개만 불러오기 임의로 
+오류 발생. 
+package.json 파일 보기. 
+"dev": "nodemon src/server.js" -> 수정하기. 
+"dev": "nodemon --ignore src/client.js src/server.js"
+끄고 재시작. 
+8) client.js 수정해도 , 서버 리스타트 안함. 
+
+9)sample 예제 
+크롬 웹브라우저 콘솔에서 확인. 
+const numbers = [1,2,3]
+numbers
+numbers2 = numbers.map(member => { return number * 2})
+numbers2 
+numbers 그대로 
+확인.
+
+
+
+=======================================================================
+Client 코드 리팩토링 & 마무리
+
+1. URI 공통 부분 빼기.
+2. 코드 수정. 
+코드 참고. 
+
+=======================================================================
+N+1 Problem
+이미지 설명 참고 
+병렬 처리 설명. Promise.all 한번에 여러개 부르기. 
+
+=======================================================================
+성능 측정하기
+매개변수 똑같이
+1 console.time("time: ")
+2 console.timeEnd("time: ")
+test 시 에러가 발생해서, 일단 3개만 테스트 호출 함. 
+3 commentRoute 코드 변경
+4 
+
+=======================================================================
+populate로 자식문서 효율적으로 불러오기
+1. client.js 코드에서 백엔드로 코드 옮기기. 
+2. blogRoute.js 작업. 
+const blogs = await Blog.find({}).limit(10).populate({ path: "user" });
+
+=======================================================================
+Virtual Populate
+1. blogRoute.js 작업. 
+2. Blog.js  작업. 
+3. client.js 확인
+
+=======================================================================
+Populate 성능 테스트
+1. 속도가 많이 개선 되었음. 
+스프링부트 @Async , 안드로이드 코루틴 및 , 트랜잭션등 더 알아보고 적용해보기. 
+
+=======================================================================
+개념 복습
