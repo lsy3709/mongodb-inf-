@@ -5,7 +5,7 @@ const userRouter = Router();
 const mongoose = require("mongoose");
 
 // 리팩토링
-const { User, Blog } = require('../models');
+const { User, Blog, Comment } = require('../models');
 
 
 // 예제1 postman 으로 예제 실습.
@@ -66,14 +66,19 @@ userRouter.delete('/:userId', async (req, res) => {
     const { userId } = req.params;
     if (!mongoose.isValidObjectId(userId))
       return res.status(400).send({ err: "invalid userId" })
-    const user = await User.findOneAndDelete({ _id: userId });
+    const [user] = await Promise.all([
+      User.findOneAndDelete({ _id: userId }),
+      //ch7 유저 삭제 작업중. 
+      // 유저 삭제, 유저 작성한 글 삭제, 코멘트 삭제, 코멘트 삭제 글 불러오기.
+      Blog.deleteMany({ "user._id": userId }),
+      Blog.updateMany(
+        { "comments.user": userId },
+        { $pull: { comments: { user: userId } } }
+      ),
+      Comment.deleteMany({ user: userId }),
+    ]);
     //const user = await User.DeleteOne({_id: userId});  , 삭제 만 하거나, 조회 하고 삭제등 
 
-    //ch7 유저 삭제 작업중. 
-    await Blog.deleteMany({ "user._id": userId });
-    await Blog.updateMany(
-      {}
-    )
 
     return res.send({ user })
   } catch (err) {
