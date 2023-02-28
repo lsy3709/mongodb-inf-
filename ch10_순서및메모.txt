@@ -1,6 +1,11 @@
 ================================================================================
  10. Transaction - 데이터 일관성 보장
 
+
+================================================================================
+ACID Transaction은 무엇인가? 그리고 왜 필요한가?
+
+
 1. 
 Atomicity 원자성, all or nothing
 Consistency 일관성 유지
@@ -19,12 +24,60 @@ concurrency 문제. 병렬로 동시에 작업을 했을 때 발생할수 있는
 
 
 ================================================================================
-ACID Transaction은 무엇인가? 그리고 왜 필요한가?
-
-1. 
-
-================================================================================
 Transaction 적용하기
+
+1. 몽고디비 공식 홈페이지에서 
+사용 법 훑어보는 중. 
+
+2. server.js 작업 
+임시디비 주석. 
+
+2. commentRoute.js 작업. 
+
+1) 추가 : startSession
+const { isValidObjectId, startSession } = require("mongoose");
+
+2) //ch10 트랜잭션 작업
+  const session = await startSession();
+
+3) 
+   //ch10 트랜잭션 작업
+   await session.withTransaction( async () => {
+      여기에 작업.       
+    }
+
+4)
+
+return res.send({ comment });
+위치 변경. 
+ //ch10 트랜잭션 작업
+   await session.withTransaction( async () => {
+      여기에 작업.       
+    }
+    return res.send({ comment });
+
+5) 위치 변경. 
+let comment;
+try {
+comment = new Comment({
+
+6) 
+finally 추가. 
+await session.endSession() 추가 
+
+7) 중요함. 설정 안하면 concurrency 발생함. 
+  //ch10 트랜잭션 작업
+        Blog.findById(blogId, {}, { session }),
+        User.findById(userId, {}, { session }),
+
+8)
+ //ch10 트랜잭션 작업
+        comment.save({ session }),
+
+9)
+server.js 작업. 
+가상 디비 생성. 시 오류 발생. 
+
 
 
 ================================================================================

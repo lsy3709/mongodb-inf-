@@ -11,7 +11,9 @@ const { Blog, User, Comment } = require("../models");
 // const { Comment } = require("../models/Comment");
 // const { Blog } = require("../models/Blog");
 // const { User } = require("../models/User");
-const { isValidObjectId } = require("mongoose");
+
+//ch10 트랜잭션 작업
+const { isValidObjectId, startSession } = require("mongoose");
 
 
 // 조회 localhost:3000/blog/123/comment/456
@@ -23,75 +25,97 @@ const { isValidObjectId } = require("mongoose");
 */
 
 commentRouter.post('/', async (req, res) => {
+  //ch10 트랜잭션 작업
+  const session = await startSession();
+  // let session = await db.getMongo().startSession();
+  let comment;
+
   try {
-    const { blogId } = req.params;
-    const { content, userId } = req.body;
-    if (!isValidObjectId(blogId))
-      return res.status(400).send({ err: "blogId is invalid" });
-    if (!isValidObjectId(userId))
-      return res.status(400).send({ err: "userId is invalid" });
-    if (typeof content !== "string")
-      return res.status(400).send({ err: "content is required" });
+    //ch10 트랜잭션 작업
+    await session.withTransaction(async () => {
+      const { blogId } = req.params;
+      const { content, userId } = req.body;
+      if (!isValidObjectId(blogId))
+        return res.status(400).send({ err: "blogId is invalid" });
+      if (!isValidObjectId(userId))
+        return res.status(400).send({ err: "userId is invalid" });
+      if (typeof content !== "string")
+        return res.status(400).send({ err: "content is required" });
 
-    //성능 개선  병렬로 한번에 불러오기.
-    const [blog, user] = await Promise.all([
+      //성능 개선  병렬로 한번에 불러오기.
+      const [blog, user] = await Promise.all([
 
-      //ch7 오타 수정.
-      // Blog.findByIdAndUpdate(blogId),
-      // User.findByIdAndUpdate(userId)
-      Blog.findById(blogId),
-      User.findById(userId)
-    ])
-    // const blog = await Blog.findByIdAndUpdate(blogId);
-    // const user = await User.findByIdAndUpdate(userId);
+        //ch7 오타 수정.
+        // Blog.findByIdAndUpdate(blogId),
+        // User.findByIdAndUpdate(userId)
 
-    if (!blog || !user)
-      return res.status(400).send({ err: "blog or user does not exist" });
+        //ch10 트랜잭션 작업
+        Blog.findById(blogId, {}, { session }),
+        User.findById(userId, {}, { session }),
+      ])
+      // const blog = await Blog.findByIdAndUpdate(blogId);
+      // const user = await User.findByIdAndUpdate(userId);
 
-    if (!blog.islive) return res.status(400).send({ err: "blog is not available" })
+      if (!blog || !user)
+        return res.status(400).send({ err: "blog or user does not exist" });
 
-    //ch7 작업중 
-    // const comment = new Comment({ content, user, blog });
-    const comment = new Comment({
-      content,
-      user,
-      userFullName: `${user.name.first} ${user.name.last}`,
+      if (!blog.islive) return res.status(400).send({ err: "blog is not available" })
 
-      //ch9 무한 루프 해결책.
-      blog: blogId,
-    });
+      //ch7 작업중 
+      // const comment = new Comment({ content, user, blog });
+      comment = new Comment({
+        content,
+        user,
+        userFullName: `${user.name.first} ${user.name.last}`,
 
-    //ch7 작업중. 
-    //       await comment.save();
-    // await Blog.updateOne({ _id: blogId },{$push: { comments: comment}}),
+        //ch9 무한 루프 해결책.
+        blog: blogId,
+      });
 
-    // 하나로 Promise 로 묶기
-    // ch9 작업 중 , 잠시 주석. 
-    // await Promise.all([
-    //   comment.save(),
-    //   Blog.updateOne({ _id: blogId }, { $push: { comments: comment } })
-    // ]);
+      //ch7 작업중. 
+      //       await comment.save();
+      // await Blog.updateOne({ _id: blogId },{$push: { comments: comment}}),
 
-    // ch9 코멘트만 생성
-    // await comment.save();
+      // 하나로 Promise 로 묶기
+      // ch9 작업 중 , 잠시 주석. 
+      // await Promise.all([
+      //   comment.save(),
+      //   Blog.updateOne({ _id: blogId }, { $push: { comments: comment } })
+      // ]);
 
-    //ch9. 최신 코멘트 3개 내장 부분 작업
-    blog.commentsCount++;
-    blog.comments.push(comment);
-    if (blog.commentsCount > 3) blog.comments.shift();
+      // ch9 코멘트만 생성
+      // await comment.save();
 
-
-    //ch9, 내장된 코멘트 부분 갯수 추가하기. 
-    await Promise.all([
-      comment.save(),
-      blog.save()
       //ch9. 최신 코멘트 3개 내장 부분 작업
-      // Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
-    ]);
+      blog.commentsCount++;
+      blog.comments.push(comment);
+      if (blog.commentsCount > 3) blog.comments.shift();
 
+
+      //ch9, 내장된 코멘트 부분 갯수 추가하기. 
+      await Promise.all([
+
+        //ch10 트랜잭션 작업
+        comment.save({ session }),
+
+        //ch10 이미 세션이 내장 되어 있음. 
+        blog.save()
+        //ch9. 최신 코멘트 3개 내장 부분 작업
+        // Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
+      ]);
+
+
+    }
+
+    );
+
+    //ch10 트랜잭션 작업
     return res.send({ comment });
   } catch (err) {
     return res.status(400).send({ err: err.message });
+  } finally {
+    //ch10 트랜잭션 작업
+    await session.endSession()
   }
 
 });

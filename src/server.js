@@ -56,7 +56,7 @@ const server = async () => {
       // 유저 10명, 게시글 2개, 댓글 10개. 
       // 게시글 총 20개, 총 댓글 : 100개 
       // generateFakeData = async (userCount, blogsPerUser, commentsPerUser) => {
-      // await generateFakeData(10, 2, 10);
+      await generateFakeData(10, 2, 10);
 
       //ch8 추가 성능 테스트
       // console.time("insert time: ")
