@@ -64,10 +64,14 @@ commentRouter.post('/', async (req, res) => {
     // await Blog.updateOne({ _id: blogId },{$push: { comments: comment}}),
 
     // 하나로 Promise 로 묶기
-    await Promise.all([
-      comment.save(),
-      Blog.updateOne({ _id: blogId }, { $push: { comments: comment } })
-    ]);
+    // ch9 작업 중 , 잠시 주석. 
+    // await Promise.all([
+    //   comment.save(),
+    //   Blog.updateOne({ _id: blogId }, { $push: { comments: comment } })
+    // ]);
+
+    // ch9 코멘트만 생성
+    await comment.save();
 
     return res.send({ comment });
   } catch (err) {
