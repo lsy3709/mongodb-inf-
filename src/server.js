@@ -22,7 +22,7 @@ const { blogRouter, commentRouter } = require('./routes')
 //mongodb+srv://admin3709:<password>@mongodbtutorial.c24ikv6.mongodb.net/test
 //<password> 지우고 패스워드 입력.
 const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
-const { generateFakeData } = require("../faker3")
+const { generateFakeData } = require("../faker2")
 
 const server = async () => {
   try {
@@ -52,7 +52,12 @@ const server = async () => {
       //   await generateFakeData(10, 1, 10);
       // }
 
-      // await generateFakeData(100000, 5, 20);
+      await generateFakeData(10, 10, 10);
+
+      //ch8 추가 성능 테스트
+      // console.time("insert time: ")
+      // await generateFakeData(10000, 5, 20);
+      // console.timeEnd("insert time: ")
     });
 
   } catch (err) {

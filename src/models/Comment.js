@@ -25,7 +25,11 @@ const CommentSchema = new Schema(
 
     //ex2
 
-    user: { type: ObjectId, required: true, ref: "user" },
+
+    // user: { type: ObjectId, required: true, ref: "user" },
+
+    // ch8 인덱스 추가하기
+    user: { type: ObjectId, required: true, ref: "user", index: true },
     userFullName: { type: String, required: true },
     blog: { type: ObjectId, required: true, ref: "blog" },
   },

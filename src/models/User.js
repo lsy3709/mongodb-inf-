@@ -20,7 +20,10 @@ const UserSchema = new Schema({
     first: { type: String, required: true },
     last: { type: String, required: true }
   },
-  age: Number,
+  // age: Number,
+
+  // ch8 인덱스 추가 부분. 
+  age: { type: Number, index: true },
   email: String
 }, { timestamps: true })
 
