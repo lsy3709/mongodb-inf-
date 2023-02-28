@@ -53,8 +53,12 @@ blogRouter.get("/", async (req, res) => {
     // 작업 중 
     // 앞에 비효율적인 방법으로 너무 많은 호출이 있지만, 
     // 지금은 3번 만 호출이 됨. 
-    const blogs = await Blog.find({})
-      .limit(200)
+
+    //ch8 GET /blog API에 Pagination 적용
+    let { page } = req.query;
+    page = parseInt(page);
+    console.log({ page });
+    let blogs = await Blog.find({}).sort({ updatedAt: -1 }).skip(page * 3).limit(3);
     // .populate([
     //   { path: "user" },
     //   { path: "comments", populate: { path: "user" } },
