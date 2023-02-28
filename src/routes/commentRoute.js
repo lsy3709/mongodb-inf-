@@ -56,7 +56,9 @@ commentRouter.post('/', async (req, res) => {
       content,
       user,
       userFullName: `${user.name.first} ${user.name.last}`,
-      blog,
+
+      //ch9 무한 루프 해결책.
+      blog: blogId,
     });
 
     //ch7 작업중. 
@@ -71,7 +73,21 @@ commentRouter.post('/', async (req, res) => {
     // ]);
 
     // ch9 코멘트만 생성
-    await comment.save();
+    // await comment.save();
+
+    //ch9. 최신 코멘트 3개 내장 부분 작업
+    blog.commentsCount++;
+    blog.comments.push(comment);
+    if (blog.commentsCount > 3) blog.comments.shift();
+
+
+    //ch9, 내장된 코멘트 부분 갯수 추가하기. 
+    await Promise.all([
+      comment.save(),
+      blog.save()
+      //ch9. 최신 코멘트 3개 내장 부분 작업
+      // Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
+    ]);
 
     return res.send({ comment });
   } catch (err) {
@@ -82,16 +98,26 @@ commentRouter.post('/', async (req, res) => {
 
 // comment 불러오기
 commentRouter.get('/', async (req, res) => {
+  //ch9 페이징
+  // 디폴트 페이지 처리. 
+  let { page = 0 } = req.query;
+  page = parseInt(page);
   const { blogId } = req.params;
   if (!isValidObjectId(blogId))
     return res.status(400).send({ err: "blogId is invalid" });
 
-
-
   // const comments = await Comment.find({ blog: blogId });
-
   // 측정 테스트 5개만 
-  const comments = await Comment.find({ blog: blogId }).limit(50);
+  // const comments = await Comment.find({ blog: blogId }).limit(50);
+
+  //ch9 페이징
+  //후기 생성순서 기준으로 최신 정렬, 내림차순
+  //한 페이지에 3개 
+
+  // ch9 디폴트 page 값 확인 하기. 
+  // console.log({ page });
+
+  const comments = await Comment.find({ blog: blogId }).sort({ createdAt: -1 }).skip(page * 3).limit(3);
 
   return res.send({ comments });
 

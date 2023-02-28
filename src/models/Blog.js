@@ -22,8 +22,10 @@ const BlogSchema = new Schema(
         last: { type: String, required: true },
       },
     },
+    //ch9 갯수 내장하기. 
+    commentsCount: { type: Number, default: 0, required: true },
     // 내장 부분 일단 주석 처리. ch9
-    // comments: [CommentSchema],
+    comments: [CommentSchema],
   },
   { timestamps: true }
 );

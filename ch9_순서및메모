@@ -52,19 +52,186 @@ Comments Pagination
     await comment.save();
 
 3. routes/commentRoute.js 작업중. !~~
-let { page }
+let { page } = req.query;
+page = parseInt(page);
+후기 생성순서 기준으로 최신 정렬, 내림차순
+한 페이지에 3개 
+const comments = await Comment.find({ blog: blogId }).sort({ createdAt: -1 }).skip(page * 3).limit(3);
 
+4. Comment.js 작업중. 
+인덱스 추가 작업. 
+CommentSchema.index({ blog: 1, createdAt: -1});
 
+5. 데이터 초기화 하고, 생성하기. 
+콤파스 -> 데이터베이스 삭제. 
+faker2 로 생성. 
+await generateFakeData(10, 2, 10);
 
+6. 포스트맨으로 확인. 
+블로그 아이디로 코멘트 검색하기 
+localhost:3000/blog/63fd8ce9d2caa929969541d0/comment
+
+디폴트 page 값 콘솔에 확인 해보기. 
+commentRoute.js 
+console.log({ page });
+
+6번 다시 확인. 
+결과 : { page: NaN }
+
+7.  디폴트 page=0 처리. 
+commentRoute.js 
+let { page = 0 } = req.query;
+
+6번 다시 확인. 
+결과 : { page: 0 }
+
+8. page=1 확인. 
+포스트맨으로 확인. 
+블로그 아이디로 코멘트 검색하기 
+localhost:3000/blog/63fd8ce9d2caa929969541d0/comment?page=1
+
+9. 콤파스에서 확인. 
+comments에서 
+{blog:ObjectId('63fd8ce9d2caa929969541d0')}
 
 ================================================================================
 Computed Fields
 후기의 총 갯수 확인하기. 
 
+1. page 확인 콘솔 주석. 
+commentRoute.js 작업. 
+  // console.log({ page });
+
+2. blogRoute.js 작업. 
+// ch9 Comment 추가
+const { Blog, User, Comment } = require("../models");
+
+3.    //ch9 코멘트 갯수 구하기. 
+    const commentCount = await Comment.find({blog: blogId}).countDocuments();
+4. 
+ //ch9 코멘트 갯수 구하기. 
+    return res.send({ blog, commentCount })
+
+5. 
+포스트맨으로 확인. 
+블로그 아이디로 코멘트 검색하기 
+localhost:3000/blog/63fd8ce9d2caa929969541d0
+결과 확인. 
+   "commentCount": 7
+
+6. 내장하는 방법으로 
+3번 주석.
+ //const commentCount = await Comment.find({blog: blogId}).countDocuments();
+
+7. Blog.js 작업
+commentsCount: { type: Number, default: 0 , required: true},
+
+8. commentRoute.js 작업. 
+//ch9, 내장된 코멘트 부분 갯수 추가하기. 
+    await Promise.all([
+      comment.save(),
+      Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
+    ]);
+
+가공된 값을 내장함. 
+
+9. 디비초기화하고 테스트 하기. 
+데이터 초기화 하고, 생성하기. 
+콤파스 -> 데이터베이스 삭제. 
+faker2 로 생성. 
+await generateFakeData(10, 2, 10);
+
+10. 
+콤파스로 확인. 
+블로그에 내장된 항목의 코멘트 갯수 확인 후, 조회시 갯수도 동일하면 됨. 
+comments 에서 
+{blog:ObjectId('63fd963c6cedef5f89faea85')}
+
+
 ================================================================================
 부분 내장(Partial Nesting)
 블로그의 최신 후기들만 내장하기. 
 
+예) 최대 3개만 내장하기. 
+
+1. Blog.js 작업. 
+주석 해제. 
+comments: [CommentSchema],
+
+2. commentRoute.js  작업 
+
+-------------------------------------------------------------
+ex)shift 설명 
+터미널에서 
+node 
+let a = [1,2,3]
+a 
+a.shift()
+
+let a = [1,2,3]
+a.push(4)
+a
+a.shift() 
+최신꺼 3개만 있어야 하니까. 1번 만 빼주고. 
+-------------------------------------------------------------
+
+blog.commentsCount++;
+blog.comments.push(comment);
+if(blog.commentsCount > 3) blog.comments.shift();
+blog.save()
+  //ch9. 최신 코멘트 3개 내장 부분 작업
+  // Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
+
+3. 데이터 다 지우고 
+포스트맨으로 확인. 
+
+1) 유저 만들고. 
+post 
+http://localhost:3000/user
+{
+    "username":"lsy2",
+    "name":{
+        "first":"SangYong",
+        "last" :"Lee"
+    }
+}
+
+2) 블로그 생성. 
+post 
+localhost:3000/blog
+{
+    "title":"second blog title111!!",
+    "content":"second blog content",
+    "userId":"63fd9d40d48445f34d8c6de5",
+    "islive": true
+}
+
+3) 해당 블로그에 후기 달기. 
+작업 중 오류. 
+commentRoute.js 부분에서 
+   blog.comments.push(comment);
+블로그의 코멘트 안에 또 자기 자신을 달아서 무한 루프
+해결책 
+변경하기 : blog: blogId,
+const comment = new Comment({
+      content,
+      user,
+      userFullName: `${user.name.first} ${user.name.last}`,
+      blog: blogId,
+    });
 
 
+4) 두번째 후기 달기. 3번째, 4번째까지 달고서, 첫번째 코멘트 빠지는 부분 확인하기. 
+post
+localhost:3000/blog/63fd9d99d48445f34d8c6de9/comment/
+정상 동작. 
+콤파스에서 
+블로그 컬렉션에서 카운트는 4개이지만, 내장된 코멘트는 3개임. 
+
+5) 블로그 페이징 조건 주고 검색 해보기. 포스트맨으로
+get 
+localhost:3000/blog/63fd9d99d48445f34d8c6de9/comment?page=0
+3개조회
+localhost:3000/blog/63fd9d99d48445f34d8c6de9/comment?page=1
+1개 조회.
 

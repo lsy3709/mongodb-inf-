@@ -48,11 +48,15 @@ const server = async () => {
       //가짜 디비 추가 부분 
       // 생성 후 주석 처리하기. 
       // 한번에 만드면 부하 걸려서 나눠서 만들기. 
+
       // for (let i = 0; i < 20; i++) {
       //   await generateFakeData(10, 1, 10);
       // }
 
-      await generateFakeData(10, 10, 10);
+      // 유저 10명, 게시글 2개, 댓글 10개. 
+      // 게시글 총 20개, 총 댓글 : 100개 
+      // generateFakeData = async (userCount, blogsPerUser, commentsPerUser) => {
+      // await generateFakeData(10, 2, 10);
 
       //ch8 추가 성능 테스트
       // console.time("insert time: ")
