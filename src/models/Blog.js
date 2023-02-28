@@ -22,7 +22,8 @@ const BlogSchema = new Schema(
         last: { type: String, required: true },
       },
     },
-    comments: [CommentSchema],
+    // 내장 부분 일단 주석 처리. ch9
+    // comments: [CommentSchema],
   },
   { timestamps: true }
 );

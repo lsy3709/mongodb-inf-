@@ -35,7 +35,25 @@ ObjectId 로 하면 용량이 많이 줄어듬.
 Comments Pagination
 후기를 페이지네이션에서 불러올수 있게 하기. 
 
-1. 
+데이터 는 앞에 디비 그대로 사용. 
+
+1.  Blog.js 작업중. 
+// 내장 부분 일단 주석 처리. ch9
+    // comments: [CommentSchema],
+
+2. routes/commentRoute.js 작업중. 
+// ch9 작업 중 , 잠시 주석. 
+    // await Promise.all([
+    //   comment.save(),
+    //   Blog.updateOne({ _id: blogId }, { $push: { comments: comment } })
+    // ]);
+
+    // ch9 코멘트만 생성
+    await comment.save();
+
+3. routes/commentRoute.js 작업중. !~~
+let { page }
+
 
 
 
