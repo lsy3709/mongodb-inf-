@@ -21,7 +21,15 @@ const { blogRouter, commentRouter } = require('./routes')
 // atlas 또는 도커 부분으로 해도 가능.
 //mongodb+srv://admin3709:<password>@mongodbtutorial.c24ikv6.mongodb.net/test
 //<password> 지우고 패스워드 입력.
-const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
+
+// 도커로 테스트시 트랜잭션에서 에러가 발생. 단일 인스턴스 설정으로 안됨.
+// 일단, 아틀라스로 다시 테스트 해보기.
+//ex2
+// const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
+
+// const MONGO_URI = 'mongodb+srv://admin3709:<패스워드>@mongodbtutorial.c24ikv6.mongodb.net/BlogService2';
+const MONGO_URI = 'mongodb://127.0.0.1:27019/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.2';
+
 const { generateFakeData } = require("../faker2")
 
 const server = async () => {
