@@ -50,8 +50,8 @@ commentRouter.post('/', async (req, res) => {
         // User.findByIdAndUpdate(userId)
 
         //ch10 트랜잭션 작업
-        Blog.findById(blogId, {}, { session }),
-        User.findById(userId, {}, { session }),
+        Blog.findById(blogId, {}, {}),
+        User.findById(userId, {}, {}),
       ])
       // const blog = await Blog.findByIdAndUpdate(blogId);
       // const user = await User.findByIdAndUpdate(userId);
@@ -72,6 +72,10 @@ commentRouter.post('/', async (req, res) => {
         blog: blogId,
       });
 
+
+      //ch10 작업중
+      //await session.abortTransaction()
+
       //ch7 작업중. 
       //       await comment.save();
       // await Blog.updateOne({ _id: blogId },{$push: { comments: comment}}),
@@ -87,35 +91,48 @@ commentRouter.post('/', async (req, res) => {
       // await comment.save();
 
       //ch9. 최신 코멘트 3개 내장 부분 작업
-      blog.commentsCount++;
-      blog.comments.push(comment);
-      if (blog.commentsCount > 3) blog.comments.shift();
+      // blog.commentsCount++;
+      // blog.comments.push(comment);
+      // if (blog.commentsCount > 3) blog.comments.shift();
 
 
       //ch9, 내장된 코멘트 부분 갯수 추가하기. 
-      await Promise.all([
+      // await Promise.all([
 
-        //ch10 트랜잭션 작업
-        comment.save({ session }),
+      //ch10 트랜잭션 작업
+      // comment.save({}),
 
-        //ch10 이미 세션이 내장 되어 있음. 
-        blog.save()
-        //ch9. 최신 코멘트 3개 내장 부분 작업
-        // Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
-      ]);
+      //ch10 이미 세션이 내장 되어 있음. 
+      // blog.save()
+      //ch9. 최신 코멘트 3개 내장 부분 작업
+      // Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 } }),
+      // ]);
+
+      //ch10 
+      //});
 
 
-    }
+      //ch10 2 다른 방법
+      // $slice -3 제일 최근에 푸쉬된 3개만 남기고 다 삭제.
+      // $slice 3 오래된 3개만 남기고 다 삭제.
+      await Promise.all([comment.save(),
+      Blog.updateOne(
+        { _id: blogId },
+        {
+          $inc: { commentsCount: 1 },
+          $push: {
+            comments: { $each: [comment], $slice: -3 }
+          }
+        })])
 
-    );
-
-    //ch10 트랜잭션 작업
-    return res.send({ comment });
+      //ch10 트랜잭션 작업
+      return res.send({ comment });
+    })
   } catch (err) {
     return res.status(400).send({ err: err.message });
   } finally {
     //ch10 트랜잭션 작업
-    await session.endSession()
+    // await session.endSession()
   }
 
 });

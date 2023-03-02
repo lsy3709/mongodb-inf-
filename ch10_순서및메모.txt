@@ -78,7 +78,50 @@ await session.endSession() 추가
 server.js 작업. 
 가상 디비 생성. 시 오류 발생. 
 
+트랜잭션 부분 오류 ,
+atlas 는 그냥 잘됨. 
+도커로 디비 생성하고 할 때, 기본이 replica set 설정 부분이 없음. 
+그래서, 따로 추가 설정 해주면 됨. 
+해결함. !
 
 
 ================================================================================
 Atomic updates
+
+1. commentRoute.js 작업 중. 
+
+이부분 주석 하고, 추가.
+await session.abortTransaction()
+
+2. 
+주석 및 제거 
+
+3. 다른 방법
+민감한 정보가 아니면 이정도는 괜찮다. 
+ //ch10 2 다른 방법
+  //ch10 2 다른 방법
+      // $slice -3 제일 최근에 푸쉬된 3개만 남기고 다 삭제.
+      // $slice 3 오래된 3개만 남기고 다 삭제.
+      await Promise.all([comment.save(), Blog.updateOne({ _id: blogId }, { $inc: { commentsCount: 1 }, $push: { comments: { $each: [comment], $slice: -3 } } })])
+
+concurrency 는 해결 되지만, 여전히 Atomic 문제가 있다. 
+트랜잭션을 안해서.
+
+4. 
+수백 , 수천개 벌크로 트랜잭션을 하는 것음 자제. 
+
+5. 공식문서 
+update operation 
+pop 인덱스를 가지고 뺀다. 
+
+ex)
+$pop: { comments: -1},
+$push: { comments: comment},
+2가지 문제, 
+3개까지 찼을 때 빼야하는데. 
+문제가 있다. 
+
+pull 
+arrayFilter 등. 
+13:27
+
