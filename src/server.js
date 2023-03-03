@@ -28,12 +28,16 @@ const { blogRouter, commentRouter } = require('./routes')
 // const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
 
 // const MONGO_URI = 'mongodb+srv://admin3709:<패스워드>@mongodbtutorial.c24ikv6.mongodb.net/BlogService2';
-const MONGO_URI = 'mongodb://lsy:1234@127.0.0.1:27017/test?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.2';
+
+
 
 const { generateFakeData } = require("../faker2")
 
 const server = async () => {
   try {
+    const { MONGO_URI } = process.env;
+    if (!MONGO_URI) throw new Error("MONGO_URI is required!!!");
+
     // unique 추가시, 인덱스 추가. -> useCreateIndex: true , useFindAndModify:false, 6버전 부터는 안써도 됨. 
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,

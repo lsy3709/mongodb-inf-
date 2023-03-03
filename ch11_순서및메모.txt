@@ -23,15 +23,59 @@ npm install 시 다 설치 되므로.
 .gitignore 만들기 
 node_modules 추가 .
 
-
-
 ================================================================================
 
 .env로 환경변수 설정
 
+1. 설치
+npm i env-cmd 
+
+2. 
+.env 파일 만들기. 
+
+3. 
+파일 안에 변수 넣기. 
+1)
+개발용, 운영용 따로 구분. 
+2) 보안용. 
+3) 시차. 실제 운영되는 서버가 해외 있다. 그 나라 시차에 맞게. 
+
+ex) 샘플 
+.env 파일안에
+MONGO_URI=mongodb://lsy:1234@127.0.0.1:27017/test?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.2
+
+4. package.json 에서 
+env-cmd 추가 
+"dev": "env-cmd nodemon --ignore src/client.js src/server.js"
+
+5. node -> process 객체 글로벌 여기에 변수를 추가해줌. 
+env-cmd 가 하는 일 . 
+
+
+6. server.js 작업. 
+변경.
+const { MONGO_URI } = process.env;
+console.log({MONGO_URI});
+
+7. 확인 
+npm run dev
+
+8. 
+.gitignore 에 
+.env 추가. 
+
+9. try 안에 넣기. 
+const { MONGO_URI } = process.env;
+if (!MONGO_URI) throw new Error("MONGO_URI is required!!!");
+
+10. 
+서버 재시작 해주기. 
+환경 변수안에 내용없으로 오류 발생시키기. 
 ================================================================================
 
 github으로 코드 push
+
+1.
 
 ================================================================================
 
