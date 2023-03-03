@@ -28,7 +28,7 @@ const { blogRouter, commentRouter } = require('./routes')
 // const MONGO_URI = 'mongodb://localhost:27017/BlogService2';
 
 // const MONGO_URI = 'mongodb+srv://admin3709:<패스워드>@mongodbtutorial.c24ikv6.mongodb.net/BlogService2';
-const MONGO_URI = 'mongodb://127.0.0.1:27019/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.2';
+const MONGO_URI = 'mongodb://lsy:1234@127.0.0.1:27017/test?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.2';
 
 const { generateFakeData } = require("../faker2")
 
